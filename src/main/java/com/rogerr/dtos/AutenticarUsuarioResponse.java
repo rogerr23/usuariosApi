@@ -12,6 +12,7 @@ public class AutenticarUsuarioResponse {
 	private String nome;
 	private String email;
 	private LocalDateTime dataHoraAcesso;
+	private LocalDateTime dataHoraExpiracao;
 	private String token;
 	
 }

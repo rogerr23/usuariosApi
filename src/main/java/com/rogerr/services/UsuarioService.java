@@ -1,11 +1,13 @@
 package com.rogerr.services;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rogerr.components.CryptoComponent;
+import com.rogerr.components.JwtBearerComponent;
 import com.rogerr.dtos.AutenticarUsuarioRequest;
 import com.rogerr.dtos.AutenticarUsuarioResponse;
 import com.rogerr.dtos.CriarUsuarioRequest;
@@ -23,6 +25,9 @@ public class UsuarioService {
 
 	@Autowired
 	CryptoComponent cryptoComponent;
+
+	@Autowired
+	JwtBearerComponent jwtBearerComponent;
 
 	public CriarUsuarioResponse criarUsuario(CriarUsuarioRequest request) {
 
@@ -61,7 +66,9 @@ public class UsuarioService {
 		response.setNome(usuario.getNome());
 		response.setEmail(usuario.getEmail());
 		response.setDataHoraAcesso(LocalDateTime.now());
-		response.setToken("");
+		response.setDataHoraExpiracao(
+				jwtBearerComponent.getExpiration().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		response.setToken(jwtBearerComponent.getToken(usuario.getEmail()));
 
 		return response;
 
