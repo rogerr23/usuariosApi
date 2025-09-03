@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.rogerr.components.CryptoComponent;
 import com.rogerr.components.JwtBearerComponent;
+import com.rogerr.components.RabbitMQProducerComponent;
 import com.rogerr.dtos.AutenticarUsuarioRequest;
 import com.rogerr.dtos.AutenticarUsuarioResponse;
 import com.rogerr.dtos.CriarUsuarioRequest;
@@ -29,6 +30,9 @@ public class UsuarioService {
 	@Autowired
 	JwtBearerComponent jwtBearerComponent;
 
+	@Autowired
+	RabbitMQProducerComponent rabbitMQProducerComponent;
+
 	public CriarUsuarioResponse criarUsuario(CriarUsuarioRequest request) {
 
 		if (usuarioRepository.existsByEmail(request.getEmail())) {
@@ -48,6 +52,8 @@ public class UsuarioService {
 		response.setNome(usuario.getNome());
 		response.setEmail(usuario.getEmail());
 		response.setDataHoraCriacao(LocalDateTime.now());
+
+		rabbitMQProducerComponent.send(response);
 
 		return response;
 
